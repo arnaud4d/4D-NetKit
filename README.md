@@ -1237,9 +1237,9 @@ The method returns a standard [**status object**](status-object-google-class) wi
 |Property|Type|Description|
 |---------|--- |------|
 |labels|Collection|Collection of [`mailLabel` objects](#maillabel-objects)|
-|success|Boolean| [standard](status-object-google-class)|
-|statusText|Text| [standard](status-object-google-class)|
-|errors|Collection| [standard](status-object-google-class)|
+|success|Boolean| [see Status object](#status-object-google-class)|
+|statusText|Text| [see Status object](#status-object-google-class)|
+|errors|Collection| [see Status object](#status-object-google-class)|
 
 
 #### mailLabel object
@@ -1290,7 +1290,7 @@ The method returns a standard [**status object**](#status-object-google-class).
 
 ### Status object (Google class)
 
-Several Google.mail functions return a `**status object**`, containing the following properties:
+Several Google.mail functions return a `status object`, containing the following properties:
 
 |Property|Type|Description|
 |---------|--- |------|
