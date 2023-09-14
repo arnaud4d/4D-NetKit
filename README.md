@@ -32,6 +32,7 @@
 	- [Office365.user.list()](#office365userlist)
 * [Google class](#google)
 	- [cs.NetKit.Google.new](#csnetkitgooglenew)
+	- [Google.mail.getLabelList()](#googlemailgetlabellist)
  	- [Google.mail.send()](#googlemailsend)
 * [Tutorial : Authenticate to the Microsoft Graph API in service mode](#authenticate-to-the-microsoft-graph-api-in-service-mode)
 * (Archived) [Tutorial : Authenticate to the Microsoft Graph API in signedIn mode (4D NetKit), then send an email (SMTP Transporter class)](#authenticate-to-the-microsoft-graph-api-in-signedin-mode-and-send-an-email-with-smtp)
@@ -907,6 +908,7 @@ In general, the timeZone property can be set to any of the time zones currently 
 * [Additional time zones](https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0#additional-time-zones)
 
 
+
 #### Example: Create an email with a file attachment and send it
 
 Send an email with an attachment, on behalf of a Microsoft 365 user:
@@ -1201,6 +1203,57 @@ $oAuth2:=New OAuth2 provider($param)
 $google:=cs.NetKit.Google.new($oAuth2;New object("mailType"; "MIME"))
 ```
 
+### Google.mail.getLabelList()
+
+**Google.mail.getLabelList**() : Object
+
+#### Parameters 
+|Parameter|Type||Description|
+|---------|--- |:---:|------|
+|Result|Object|<-| [Status object](#status-object-google-class) |
+
+#### Description
+
+`Google.mail.getLabelList()` returns an object containing the collection of all labels in the user's mailbox. 
+
+In `email`, pass the email to be sent. Possible types:
+
+* Text or Blob: the email is sent using the MIME format
+* Object: the email is sent using the JSON format, in accordance with the [4D email object format](https://developer.4d.com/docs/API/EmailObjectClass.html#email-object), which follows the JMAP specification.
+
+The data type passed in `email` must be compatible with the [`Google.mail.type` property](#returned-object-2). In the following example, since the mail type is `JMAP`, `$email` must be an object: 
+
+```4d 
+$Google:=cs.NetKit.Google.new($token; New object("mailType"; "JMAP"))
+$status:=$Google.mail.send($email)
+```
+
+#### Returned object 
+
+The method returns a standard [**status object**](status-object-google-class) with an additional "labels" property:
+
+|Property|Type|Description|
+|---------|--- |------|
+|labels|Collection|Collection of [`mailLabel` objects](#maillabel-objects)|
+|success|Boolean| [**standard**](status-object-google-class)|
+|statusText|Text| [**standard**](status-object-google-class)|
+|errors|Collection| [**standard**](status-object-google-class)|
+
+
+#### mailLabel object
+
+A `mailLabel` object can contain additional information returned by the server.
+
+|Property|Type|Description|
+|---------|--- |------|
+|name|Text|Display name of the label.|
+|id|Text|Immutable ID of the label.|
+|messageListVisibility|Text|Visibility of messages with this label in the message list in the Gmail web interface.
+Can be "show" or "hide"|
+|labelListVisibility|Text|Visibility of the label in the label list in the Gmail web interface. Can be:<ul><li>"labelShow": Show the label in the label list.</li><li>"labelShowIfUnread": Show the label if there are any unread messages with that label</li><li>"labelHide": Do not show the label in the label list.</li></ul>|
+|type|Text| Owner type for the label:<ul><li>"user": User labels are created by the user and can be modified and deleted by the user and can be applied to any message or thread.</li><li>"system": System labels are internally created and cannot be added, modified, or deleted. System labels may be able to be applied to or removed from messages and threads under some circumstances but this is not guaranteed. For example, users can apply and remove the INBOX and UNREAD labels from messages and threads, but cannot apply or remove the DRAFTS or SENT labels from messages or threads.</li></ul>|
+
+
 ### Google.mail.send()
 
 **Google.mail.send**( *email* : Text ) : Object<br/>**Google.mail.send**( *email* : Object ) : Object<br/>**Google.mail.send**( *email* : Blob ) : Object
@@ -1209,7 +1262,7 @@ $google:=cs.NetKit.Google.new($oAuth2;New object("mailType"; "MIME"))
 |Parameter|Type||Description|
 |---------|--- |:---:|------|
 |email|Text &#124; Blob &#124; Object|->| Email to be sent|
-|Result|Object|<-| [Status object](#status-object-1) |
+|Result|Object|<-| [Status object](#status-object-google-class) |
 
 #### Description
 
@@ -1231,15 +1284,21 @@ $status:=$Google.mail.send($email)
 
 #### Returned object 
 
-The method returns a **status object** with the following properties:
+The method returns a standard [**status object**](#status-object-google-class). 
+
+### Status object (Google class)
+
+Several Google.mail functions return a `**status object**`, containing the following properties:
 
 |Property|Type|Description|
 |---------|--- |------|
 |success|Boolean| True if the operation was successful|
-|statusText|Text| Status message returned by the Gmail server, or last error returned by the 4D error stack|
-|errors|Collection| Collection of 4D errors. Not returned if the Gmail server returns a `statusText`|
+|statusText|Text| Status message returned by the Gmail server or last error returned by the 4D error stack|
+|errors |  Collection | Collection of 4D error items (not returned if a Gmail server response is received): <ul><li>[].errcode is the 4D error code number</li><li>[].message is a description of the 4D error</li><li>[].componentSignature is the signature of the internal component that returned the error</li></ul>|
 
 Basically, you can test the `success` and `statusText` properties of this object to know if the function was correctly executed.
+
+Some functions adds specific properties to the **status object**, properties are described with the functions. 
 
 
 ## Tutorials
@@ -1343,6 +1402,7 @@ $email.textBody:="Test mail \r\n This is just a test e-mail \r\n Please ignore i
 // Configure the SMTP connection
 $parameters:=New object
 $parameters.accessTokenOAuth2:=$token
+
 $parameters.authenticationMode:=SMTP authentication OAUTH2
 $parameters.host:="smtp.office365.com"
 $parameters.user:=$address
