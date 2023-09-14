@@ -26,7 +26,7 @@
 	- [Office365.mail.send()](#office365mailsend)
 	- [Well-known folder names](well-known-folder-names)
 	- ["Microsoft" mail object properties](#microsoft-mail-object-properties)
-	- [Status object](#status-object)
+	- [Status object (Office365 Class)](#status-object)
 	- [Office365.user.get()](#office365userget)
 	- [Office365.user.getCurrent()](#office365usergetcurrent)
 	- [Office365.user.list()](#office365userlist)
@@ -34,6 +34,8 @@
 	- [cs.NetKit.Google.new](#csnetkitgooglenew)
 	- [Google.mail.getLabelList()](#googlemailgetlabellist)
  	- [Google.mail.send()](#googlemailsend)
+ 	- [Status object (Google Class)](#status-object-google-class)
+
 * [Tutorial : Authenticate to the Microsoft Graph API in service mode](#authenticate-to-the-microsoft-graph-api-in-service-mode)
 * (Archived) [Tutorial : Authenticate to the Microsoft Graph API in signedIn mode (4D NetKit), then send an email (SMTP Transporter class)](#authenticate-to-the-microsoft-graph-api-in-signedin-mode-and-send-an-email-with-smtp)
 * [Copyrights](#copyrights)
@@ -1235,9 +1237,9 @@ The method returns a standard [**status object**](status-object-google-class) wi
 |Property|Type|Description|
 |---------|--- |------|
 |labels|Collection|Collection of [`mailLabel` objects](#maillabel-objects)|
-|success|Boolean| [**standard**](status-object-google-class)|
-|statusText|Text| [**standard**](status-object-google-class)|
-|errors|Collection| [**standard**](status-object-google-class)|
+|success|Boolean| [standard](status-object-google-class)|
+|statusText|Text| [standard](status-object-google-class)|
+|errors|Collection| [standard](status-object-google-class)|
 
 
 #### mailLabel object
